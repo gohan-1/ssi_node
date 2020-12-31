@@ -1,10 +1,11 @@
 const {Client, AccountId, PrivateKey, TopicCreateTransaction, TopicMessageSubmitTransaction, TopicMessageQuery} =require('@hashgraph/sdk')
 // const auth = require('../controllers/auth')
+
 require("dotenv").config();
 exports.verify = async (topicId, hash)=>{
     return new Promise(async(resolve, reject) => {
 
-
+        let count=0
          
         const privateKey = PrivateKey.fromString(process.env.HEDERA_ACCOUNT_PRIVATE_KEY);
         const accountId = AccountId.fromString(process.env.HEDERA_ACCOUNT_ACCOUNT_ID);
@@ -37,17 +38,26 @@ exports.verify = async (topicId, hash)=>{
                 console.log('Subscribed',Buffer.from(message.contents,'utf-8').toString())
 
                 let msgValue= Buffer.from(message.contents,'utf-8').toString()
-                if(JSON.parse(msgValue).message.credentialHash.toString()===hash.toString()&& JSON.parse(msgValue).message.operation.toString()==="issue" )
-                resolve("valid")
+                if(JSON.parse(msgValue).message.credentialHash.toString()===hash.toString()&& JSON.parse(msgValue).message.operation.toString()==="issue" ){
+                count=count+1
+                    resolve("valid")
+                }
             
      }
      
      );
+  
 
 
     setTimeout(()=>{   
-        reject("invalid")
+        console.log("working")
+        if(count==0){
+            resolve("invalid")
+     }
+
      }, 5000);
+
+    
    
      
 

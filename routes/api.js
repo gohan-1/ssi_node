@@ -52,7 +52,12 @@ module.exports = (app) => {
                 res.send(resBody)
             }
         
-    
+            topicId=null
+            hash=null
+            didTopicId=null
+            issuerDid=null
+            did=null
+            auth=null
         
     })
 }

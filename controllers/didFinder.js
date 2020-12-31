@@ -3,9 +3,10 @@ const {Client, AccountId, PrivateKey, TopicCreateTransaction, TopicMessageSubmit
 require("dotenv").config();
 exports.getPublicDid = async (topicId, hash,issuerDid)=>{
     return new Promise(async(resolve, reject) => {
+        let count=0
 
         
-         console.log("3")
+      
         const privateKey = PrivateKey.fromString(process.env.HEDERA_ACCOUNT_PRIVATE_KEY);
         const accountId = AccountId.fromString(process.env.HEDERA_ACCOUNT_ACCOUNT_ID);
         const mirrorNodeAddress =  process.env.MIRROR_NODE_IP_ADDRESS;
@@ -14,10 +15,10 @@ exports.getPublicDid = async (topicId, hash,issuerDid)=>{
             network: 'testnet',
             mirrorNetwork: mirrorNodeAddress
         };
-        console.log("3")
+      
         const client = Client.fromConfig(clientConfiguration);
         client.setOperator(accountId,privateKey);
-        console.log("4")
+      
         // const transaction = new TopicCreateTransaction().setTopicMemo('Hello HCS Tutorial!');
     
         //Sign with the client operator private key and submit the transaction to a Hedera network
@@ -37,8 +38,10 @@ exports.getPublicDid = async (topicId, hash,issuerDid)=>{
                 console.log('Subscribed',Buffer.from(message.contents,'utf-8').toString())
 
                 let msgValue= Buffer.from(message.contents,'utf-8').toString()
-                if(JSON.parse(msgValue).message.did.toString()===issuerDid.toString()&& JSON.parse(msgValue).message.operation.toString()==="create" )
-                resolve(issuerDid)
+                if(JSON.parse(msgValue).message.did.toString()===issuerDid.toString()&& JSON.parse(msgValue).message.operation.toString()==="create" ){
+                    count =count+1
+                    resolve(issuerDid)
+                }
             
      },(error)=>{
          console.log(error)
@@ -48,7 +51,10 @@ exports.getPublicDid = async (topicId, hash,issuerDid)=>{
 
 
     setTimeout(()=>{   
-        reject("invalid")
+       
+        if(count==0){
+            resolve("invalid")
+     }
      }, 5000);
    
      
