@@ -31,6 +31,6 @@ app.use(cors());
 // require('./routes/auth-routes')(app, metaAuth);
 require('./routes/api')(app);
 
-app.listen(9090, () => console.log("server up and listening at 9090"));
+app.listen(9090, '0.0.0.0',() => console.log("server up and listening at 9090"));
 
 module.exports = app;
